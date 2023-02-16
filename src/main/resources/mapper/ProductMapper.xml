@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper
+	namespace="com.codehistory.myweb.product.service.ProductMapper">
+
+	<insert id="regist" parameterType="ProductVO">
+		insert into PRODUCT(prod_enddate,
+		prod_writer,
+		prod_name,
+		prod_price,
+		prod_count,
+		prod_discount,
+		prod_purchase_yn,
+		prod_content,
+		prod_comment)
+		values(#{prod_enddate},
+		#{prod_writer},
+		#{prod_name},
+		#{prod_price},
+		#{prod_count},
+		#{prod_discount},
+		#{prod_purchase_yn},
+		#{prod_content},
+		#{prod_comment})
+	</insert>
+
+	<!-- <select id="getList" resultType="ProductVO"> select * from PRODUCT 
+		where prod_writer=#{user_id} order by prod_id desc limit #{cri.pageStart}, 
+		#{cri.amount} </select> -->
+
+	<select id="getList" resultType="ProductVO">
+	 select * from product
+      where prod_writer = #{user_id}
+      
+      <if test="cri.startDate!=null and cri.startDate != ''">
+         <![CDATA[and date_format(prod_enddate, '%Y-%m-%d') >= date_format(#{cri.startDate}, '%Y-%m-%d')]]>
+      </if>
+      <if test="cri.endDate != null and cri.endDate != ''">
+         <![CDATA[and date_format(prod_enddate, '%Y-%m-%d') <= date_format(#{cri.endDate}, '%Y-%m-%d')]]>   
+      </if>
+      <if test="cri.searchName != null and cri.searchName != ''">
+         and prod_name like concat('%', #{cri.searchName}, '%')
+      </if>
+      <if test="cri.searchContent != null and cri.searchContent != ''">
+         and prod_name like concat('%', #{cri.searchContent}, '%')
+      </if>
+      order by
+      <if test="cri.searchPrice == 'asc'">
+         prod_price asc,
+      </if>
+      <if test="cri.searchPrice == 'desc'">
+         prod_price desc,
+      </if>
+         prod_id desc
+
+      limit #{cri.pageStart}, #{cri.amount}
+
+
+	</select>
+
+
+
+	<select id="getDetail" resultType="ProductVO"
+		parameterType="string">
+		select * from PRODUCT where prod_id=#{prod_id}
+	</select>
+
+	<select id="getTotal" resultType="int">
+      select count(*) as total from product
+       where prod_writer = #{user_id}
+      <if test="cri.startDate != null and cri.startDate != ''">
+         <![CDATA[and date_format(prod_enddate, '%Y-%m-%d') >= date_format(#{cri.startDate}, '%Y-%m-%d')]]>
+      </if>
+      <if test="cri.endDate != null and cri.endDate != ''">
+         <![CDATA[and date_format(prod_enddate, '%Y-%m-%d') <= date_format(#{cri.endDate}, '%Y-%m-%d')]]>   
+      </if>
+      <if test="cri.searchName != null and cri.searchName != ''">
+         and prod_name like concat('%', #{cri.searchName}, '%')
+      </if>
+      <if test="cri.searchContent != null and cri.searchContent != ''">
+         and prod_name like concat('%', #{cri.searchContent}, '%')
+      </if>
+   </select>
+
+</mapper>

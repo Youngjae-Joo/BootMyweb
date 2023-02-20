@@ -71,7 +71,7 @@ public class ProductController {
 	
 	//등록
 	@PostMapping("/registForm")
-	public String registForm(@Valid ProductVO vo, Errors error, Model model,RedirectAttributes ra) {
+	public String registForm(@Valid ProductVO vo, Errors error, Model model, RedirectAttributes ra) {
 		if(error.hasErrors()) {
 			List<FieldError> list=error.getFieldErrors();
 			ArrayList<String> msglist=new ArrayList<>();

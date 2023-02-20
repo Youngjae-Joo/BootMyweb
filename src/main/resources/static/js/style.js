@@ -106,13 +106,21 @@ function getCategory_List(e) {
 		//////////////////////////////////////////////////
 		//비동기콜백에서 category_create() 호출
 		//비동기호출후 category_set() 호출
-		category_create(); //다음 카테고리생성
-		//////////////////////////////////////////////////
-
+		//category_create(); //다음 카테고리생성
 		
+		console.log(obj);
+		$.ajax({
+			url:"../getCategoryChild/"+obj.group_id+"/"+obj.category_lv+"/"+obj.category_detail_lv,
+			type:"get",
+			success:function(result){category_create(result)},
+			error:function(err){alert("카테고리 조회에 실패했습니다. 관리자에게 문의해주세요")}
+		})
+		//////////////////////////////////////////////////
 	} 
-	
+	//카테고리 키값 처리(선택한 값의 group_id, category_pk를 처리
+	$(e.target).category_set();
 }
+
 //카테고리세팅
 $.fn.category_set = function() {
 	var category_id = this.data("set").category_id;
@@ -129,11 +137,13 @@ $.fn.category_remove = function() {
 function category_create(data) {
 
 	//예시데이터
+	/*
 	var data = [
 	 {category_lv: 2, group_id: 'B', category_detail_nm: '값선택', category_detail_parent_nm: '값선택'},
 	 {category_lv: 2, group_id: 'B', category_detail_nm: '값선택', category_detail_parent_nm: '값선택'},
 	 {category_lv: 2, group_id: 'B', category_detail_nm: '값선택', category_detail_parent_nm: '값선택'}
-  ];
+  	];
+  	*/
 
 	var category = "";
 	category += '<ul class="categoryList" style="position: relative;" onclick="getCategory_List(event);" >';

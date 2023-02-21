@@ -2,6 +2,7 @@ package com.codehistory.myweb.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.codehistory.myweb.command.PageVO;
@@ -71,7 +73,7 @@ public class ProductController {
 	
 	//등록
 	@PostMapping("/registForm")
-	public String registForm(@Valid ProductVO vo, Errors error, Model model, RedirectAttributes ra) {
+	public String registForm(@Valid ProductVO vo, Errors error, Model model, RedirectAttributes ra, @RequestParam("file")List<MultipartFile> lists) {
 		if(error.hasErrors()) {
 			List<FieldError> list=error.getFieldErrors();
 			ArrayList<String> msglist=new ArrayList<>();
@@ -87,11 +89,27 @@ public class ProductController {
 			return "product/productReg";
 		}
 		
-		int result=productService.regist(vo);
+		//파일업로드 작업 -> 
+		//리스트에서 빈값은 제거
+		lists=lists.stream().filter((x)->x.isEmpty()==false).collect(Collectors.toList());
+		
+		//확장자가 image가 아니라면 경고문
+		for(MultipartFile file:lists) {
+			if(file.getContentType().contains("image") ==false ) {
+				ra.addFlashAttribute("msg","이미지는 png, jpg, jpeg형식만 등록가능합니다.");
+				return "redirect:/product/productReg";
+			}
+		}
+		//파일업로드 작업을 ->service영역으로 위임
+		
+		
+		//글 등록 작업
+		int result=productService.regist(vo,lists);
 		String msg=result==1?"정상 등록되었습니다":"등록에 실패했습니다";
 		ra.addFlashAttribute("msg", msg);
 		
-		return "redirect:/product/productList";
+		
+		return "redirect:/product/productList"; //목록으로
 	}
 	
 	

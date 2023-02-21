@@ -8,7 +8,7 @@
                 <div class="midiaq">
                     <div class="page_title">상품 관리 > 상품 등록</div>
 
-                    <form name="productForm" action="registForm" method="post">
+                    <form name="productForm" action="registForm" method="post" enctype="multipart/form-data">
                         <div class="full_collum collum">
                             <ul>
                                 <li class="collum_tit">
@@ -265,7 +265,14 @@
     </div>  
 
 </th:block>
-<script>
+<script th:inline="javascript">
+var msg=JSON.parse('[[${msg}]]');
+if(msg!=null){
+	 alert(msg);
+}
+</script>
+
+<script th:inline="javascript">
 	//화면이 로드가 일어난 후에 실행(카테고리 데이터)
 	$(document).ready(function(){
 		$.ajax({

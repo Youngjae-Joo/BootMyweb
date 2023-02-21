@@ -12,3 +12,42 @@ CREATE TABLE PRODUCT(
 	PROD_CONTENT VARCHAR(5000), ##내용
 	PROD_COMMENT VARCHAR(5000) ##메모
 );
+
+#################### 조인 ##################################
+select p.*, k.category_nav 
+from (
+		select * from product
+		where prod_writer = 'admin'
+		and prod_name like '%샘숭%'
+) p
+left join (
+	SELECT
+       CONCAT(A1.group_ID, A1.CATEGORY_ID) AS CATEGORY_KEY, ##카테고리 키 (그룹 + 키 형태로 카테고리분류) 
+ 	   CASE A1.category_parent_LV
+ 	        WHEN 0 THEN A1.category_detail_NM
+ 			WHEN 1 THEN CONCAT(A2.category_detail_NM,' > ', A1.category_detail_NM)
+ 			WHEN 2 THEN CONCAT(A3.category_detail_NM, ' > ', A2.category_detail_NM,' > ', A1.category_detail_NM)
+ 	   END as CATEGORY_NAV
+		FROM PRODUCT_CATEGORY A1
+		LEFT OUTER JOIN PRODUCT_CATEGORY A2
+		ON A1.CATEGORY_PARENT_LV = A2.CATEGORY_LV AND A1.CATEGORY_DETAIL_PARENT_LV = A2.CATEGORY_DETAIL_LV AND A1.GROUP_ID = A2.GROUP_ID
+		LEFT OUTER JOIN PRODUCT_CATEGORY A3
+		ON A2.CATEGORY_PARENT_LV = A3.CATEGORY_LV AND A2.CATEGORY_DETAIL_PARENT_LV = A3.CATEGORY_DETAIL_LV
+		ORDER BY CATEGORY_NAV ASC
+) k
+on p.prod_category=k.category_key
+order by prod_price asc, prod_id desc
+limit 0,10;
+
+
+
+############################파일업로드 테이블############################
+CREATE TABLE PRODUCT_UPLOAD (
+   UPLOAD_NO INT PRIMARY KEY auto_increment,
+  FILENAME varchar(100) not null, ##실제파일명
+  FILEPATH varchar(100) not null, ##폴더명
+   UUID varchar(50) not null, ##UUID명
+  REGDATE TIMESTAMP default now(),
+   PROD_ID INT, ##FK
+   PROD_WRITER VARCHAR(20) ##FK
+);

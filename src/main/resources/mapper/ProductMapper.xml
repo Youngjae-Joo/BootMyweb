@@ -9,25 +9,48 @@
 	<insert id="regist" parameterType="ProductVO">
 		insert into
 		PRODUCT(prod_enddate,
-		prod_category,
-		prod_writer,
-		prod_name,
-		prod_price,
-		prod_count,
-		prod_discount,
-		prod_purchase_yn,
-		prod_content,
-		prod_comment)
+			prod_category,
+			prod_writer,
+			prod_name,
+			prod_price,
+			prod_count,
+			prod_discount,
+			prod_purchase_yn,
+			prod_content,
+			prod_comment)
 		values(#{prod_enddate},
-		#{prod_category},
-		#{prod_writer},
-		#{prod_name},
-		#{prod_price},
-		#{prod_count},
-		#{prod_discount},
-		#{prod_purchase_yn},
-		#{prod_content},
-		#{prod_comment})
+			#{prod_category},
+			#{prod_writer},
+			#{prod_name},
+			#{prod_price},
+			#{prod_count},
+			#{prod_discount},
+			#{prod_purchase_yn},
+			#{prod_content},
+			#{prod_comment})
+	</insert>
+	
+	
+	<!-- 
+	1. insert전에 product테이블의 키값을 selectKey태그를 이용해서 얻습니다.
+	2. resultType은 조회된 결과 타입, 
+	keyProperty는 sql에 전달되는 vo에 저장할 key값,
+	order는 BEFORE, AFTER - insert 이전에 실행 or insert 이후에 실행
+	 -->
+	<insert id="registFile" parameterType="ProductUploadVO">
+		<selectKey resultType="int" keyProperty="prod_id" order="BEFORE">
+			select max(prod_id) as prod_id from PRODUCT where prod_writer=#{prod_writer}			
+		</selectKey>
+		insert into PRODUCT_UPLOAD(filename,
+									filepath,
+									uuid,
+									prod_id,
+									prod_writer)
+		 values(#{filename},
+		 		#{filepath},
+		 		#{uuid},
+		 		#{prod_id},
+		 		#{prod_writer})
 	</insert>
 
 	<!-- <select id="getList" resultType="ProductVO"> select * from PRODUCT 

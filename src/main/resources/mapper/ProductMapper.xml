@@ -106,7 +106,7 @@
 			ORDER BY CATEGORY_NAV ASC
 		) k
 		on p.prod_category=k.category_key
-		order by prod_price asc, prod_id desc
+		order by prod_id desc, prod_price asc
 		limit 0,10
 	</select>
 
@@ -149,7 +149,9 @@
 	</select>
 
 
-
+	<select id="getProductImg" resultType="ProductUploadVO">
+		select * from PRODUCT_UPLOAD where prod_id=#{prod_id}
+	</select>
 
 
 </mapper>

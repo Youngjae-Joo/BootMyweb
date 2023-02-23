@@ -118,5 +118,38 @@
 	</footer>	
 	
 </body>
+<script th:inline="javascript">
+	console.log(JSON.parse('[[${uri}]]'));
+	
+	/*
+	메뉴선택유지-메뉴하이라이트
+	
+	sub_menu에 display:block.
+	sub_menu->a링크에 on클래스.
+	sub_menu_toggle>a에 sub_menu_select클래스.
+	*/
+ 	var menu=JSON.parse('[[${uri}]]'); //postHandler에서 보내주는 uri
+	$(".sub_menu a").each(function(index,item){
+		//item - a태그임
+		//jquery적용
+		
+		//href에 uri값이 들어있는지 확인
+		if($(item).attr("href").includes(menu)){
+			$(item).addClass("on");
+			$(item).closest(".sub_menu").css("display","block");
+			$(item).closest(".sub_menu").prev().addClass("sub_menu_select");
+		}
+	}); 
+	
+	//반복문을 안돌리고 $('a[href*='+'[[${uri}]]'+']').addClass() 로 처리할 수도 있다.
+	//*로 조건을 만족하는 모든 a태그 가져옴.
+	/* 	
+ 	$('a[href*='+'[[${uri}]]'+']').addClass("on");
+	$('a[href*='+'[[${uri}]]'+']').closest(".sub_menu").css("display","block");
+	$('a[href*='+'[[${uri}]]'+']').closest(".sub_menu").prev().addClass("sub_menu_select");
+	*/
+	
+	
+</script>
 </th:block>
 </html>

@@ -37,6 +37,10 @@ dependencies {
 	
 	//이미지썸네일
 	implementation 'net.coobird:thumbnailator:0.4.8'
+	
+	//JSON파서
+	implementation 'com.google.code.gson:gson:2.8.5'
+	
 }
 
 tasks.named('test') {
